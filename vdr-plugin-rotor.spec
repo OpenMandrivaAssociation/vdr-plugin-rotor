@@ -13,6 +13,7 @@ License:	GPL
 URL:		http://home.vrweb.de/~bergwinkl.thomas/
 Source:		vdr-%plugin-%version.tar.bz2
 Patch0:		vdr-rotor-0.1.4-fix-crash.patch
+BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.4.1-6
 Requires:	vdr-abi = %vdr_abi
 
