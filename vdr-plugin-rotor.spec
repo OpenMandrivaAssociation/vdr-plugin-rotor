@@ -2,7 +2,7 @@
 %define plugin	rotor
 %define name	vdr-plugin-%plugin
 %define version	0.1.4
-%define rel	14
+%define rel	15
 
 Summary:	VDR plugin: DiseqC motor steering
 Name:		%name
@@ -11,10 +11,11 @@ Release:	%mkrel %rel
 Group:		Video
 License:	GPL
 URL:		http://home.vrweb.de/~bergwinkl.thomas/
-Source:		vdr-%plugin-%version.tar.bz2
+Source:		vdr-%plugin-%version-vdr1.5.7.tgz
 Patch0:		vdr-rotor-0.1.4-fix-crash.patch
+Patch1:		92_Rotor-0.1.4-vdr1.5.10.dpatch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
-BuildRequires:	vdr-devel >= 1.4.1-6
+BuildRequires:	vdr-devel >= 1.6.0
 Requires:	vdr-abi = %vdr_abi
 
 %description
@@ -23,6 +24,8 @@ With this plugin you can control a diseqc motor.
 %prep
 %setup -q -n %plugin-%version
 %patch0 -p0 -b .crash
+%patch1 -p1
+%vdr_plugin_prep
 
 %build
 %vdr_plugin_build
