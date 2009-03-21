@@ -23,7 +23,7 @@ With this plugin you can control a diseqc motor.
 
 %prep
 %setup -q -n %plugin-%version
-%patch0 -p0 -b .crash
+%patch0 -p1 -b .crash
 %patch1 -p1
 %vdr_plugin_prep
 
