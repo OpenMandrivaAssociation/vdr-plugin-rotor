@@ -1,0 +1,22 @@
+diff -p -up rotor-0.1.4/rotor.c.orig rotor-0.1.4/rotor.c
+--- rotor-0.1.4/rotor.c.orig	2007-10-14 13:48:45.000000000 +0300
++++ rotor-0.1.4/rotor.c	2009-03-21 12:13:12.000000000 +0200
+@@ -95,7 +95,8 @@ bool cPluginRotor::Start(void)
+       continue;
+     if ((diseqc=Diseqcs.Get(source->Code(),12000,'h')) || (diseqc=Diseqcs.Get(source->Code(),12000,'v')) || (diseqc=Diseqcs.Get(source->Code(),12000,'l')) || (diseqc=Diseqcs.Get(source->Code(),12000,'r'))) 
+     {
+-      char *c=strdup(diseqc->Commands());
++      char *commandstring=strdup(diseqc->Commands());
++      char *c=commandstring;      
+       while (c = strchr(c, '['))
+       {
+         char *e = strchr(++c, ']');
+@@ -130,7 +131,7 @@ bool cPluginRotor::Start(void)
+           break;
+         }
+       }
+-      free(c);
++      free(commandstring);
+     }
+     cRotorPos *p = RotorPositions.GetfromSource(source->Code());
+     if (p==RotorPositions.First())

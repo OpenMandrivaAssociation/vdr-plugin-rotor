@@ -1,0 +1,98 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 92_Rotor-0.1.4-vdr1.5.10.dpatch by yolgecen at vdrportal.de
+## http://vdrportal.de/board/thread.php?threadid=69814
+##
+## Thomas Günther <tom@toms-cafe.de>:
+##   - Added compatibility to VDR < 1.5.10
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Changes for VDR >= 1.5.10.
+
+@DPATCH@
+--- rotor-0.1.4/filter.c
++++ rotor-0.1.4/filter.c
+@@ -375,6 +375,10 @@
+         char ALangs[MAXAPIDS + 1][4] = { "" };
+         char DLangs[MAXDPIDS + 1][4] = { "" };
+ #endif
++#if VDRVERSNUM >= 10510
++        int Spids[MAXDPIDS + 1] = { 0 };
++        char SLangs[MAXDPIDS + 1][MAXLANGCODE2] = { "" };
++#endif
+         int Tpid = 0;
+         int NumApids = 0;
+         int NumDpids = 0;
+@@ -448,7 +452,11 @@
+                 delete d;
+                 }
+             }
++#if VDRVERSNUM >= 10510
++        Menu->SetPids(pmt.getServiceId(),Vpid, Vpid ? Ppid : 0, Apids, ALangs, Dpids, DLangs, Spids, SLangs, Tpid);
++#else
+         Menu->SetPids(pmt.getServiceId(),Vpid, Vpid ? Ppid : 0, Apids, ALangs, Dpids, DLangs, Tpid);
++#endif
+         Menu->SetCaIds(pmt.getServiceId(),CaDescriptors->CaIds());
+         Menu->SetCaDescriptors(pmt.getServiceId(),CaDescriptorHandler.AddCaDescriptors(CaDescriptors));
+         }
+--- rotor-0.1.4/menu.c
++++ rotor-0.1.4/menu.c
+@@ -407,6 +407,10 @@
+     char ALangs[MAXAPIDS + 1][4] = { "" };
+     char DLangs[MAXDPIDS + 1][4] = { "" };
+ #endif
++#if VDRVERSNUM >= 10510
++    int Spids[MAXDPIDS + 1] = { 0 };
++    char SLangs[MAXDPIDS + 1][MAXLANGCODE2] = { "" };
++#endif
+     int CaIds[MAXCAIDS+1] = { 0 };
+     for (int i=0; i<=MAXAPIDS; i++)
+     {
+@@ -420,7 +424,11 @@
+     }
+     for (int i=0; i<=MAXCAIDS; i++)
+       CaIds[i]=Channel[Num].Ca(i);
++#if VDRVERSNUM >= 10510
++    channel->SetPids(Channel[Num].Vpid(),Channel[Num].Ppid(),Apids,ALangs,Dpids,DLangs,Spids,SLangs,Channel[Num].Tpid());
++#else
+     channel->SetPids(Channel[Num].Vpid(),Channel[Num].Ppid(),Apids,ALangs,Dpids,DLangs,Channel[Num].Tpid());
++#endif
+     channel->SetCaIds(CaIds);
+   }
+   else
+@@ -449,7 +457,9 @@
+   num++;
+ }
+
+-#if VDRVERSNUM>=10332
++#if VDRVERSNUM >= 10510
++void cMenuScan::SetPids(int Sid,int Vpid, int Ppid, int *Apids, char ALangs[][MAXLANGCODE2], int *Dpids, char DLangs[][MAXLANGCODE2], int *Spids, char SLangs[][MAXLANGCODE2], int Tpid)
++#elif VDRVERSNUM >= 10332
+ void cMenuScan::SetPids(int Sid,int Vpid, int Ppid, int *Apids, char ALangs[][MAXLANGCODE2], int *Dpids, char DLangs[][MAXLANGCODE2], int Tpid)
+ #else
+ void cMenuScan::SetPids(int Sid,int Vpid, int Ppid, int *Apids, char ALangs[][4], int *Dpids, char DLangs[][4], int Tpid)
+@@ -458,7 +468,11 @@
+   for (int i=0; i<num; i++)
+     if (Sid==Channel[i].Sid())
+     {
++#if VDRVERSNUM >= 10510
++      Channel[i].SetPids(Vpid,Ppid,Apids,ALangs,Dpids,DLangs,Spids,SLangs,Tpid);
++#else
+       Channel[i].SetPids(Vpid,Ppid,Apids,ALangs,Dpids,DLangs,Tpid);
++#endif
+       display(i);
+     }
+ }
+--- rotor-0.1.4/menu.h
++++ rotor-0.1.4/menu.h
+@@ -113,7 +113,11 @@
+   virtual eOSState ProcessKey(eKeys Key);
+   void AddChannel(int Num);
+   void NewChannel(const cChannel *Transponder, const char *Name, const char *ShortName, const char *Provider, int Nid, int Tid, int Sid);
++#if VDRVERSNUM >= 10510
++  void SetPids(int Sid,int Vpid, int Ppid, int *Apids, char ALangs[][MAXLANGCODE2], int *Dpids, char DLangs[][MAXLANGCODE2], int *Spids, char SLangs[][MAXLANGCODE2], int Tpid);
++#else
+   void SetPids(int Sid,int Vpid, int Ppid, int *Apids, char ALangs[][MAXLANGCODE2], int *Dpids, char DLangs[][MAXLANGCODE2], int Tpid);
++#endif
+   void SetCaIds(int Sid,const int *CaIds);
+   void SetCaDescriptors(int Sid,int Level);
+   cChannel* GetChannel(int Sid);
