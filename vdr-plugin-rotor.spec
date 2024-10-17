@@ -10,7 +10,7 @@ Version:	%version
 Release:	%mkrel %rel
 Group:		Video
 License:	GPL
-URL:		http://home.vrweb.de/~bergwinkl.thomas/
+URL:		https://home.vrweb.de/~bergwinkl.thomas/
 Source:		vdr-%plugin-%version-vdr1.5.7.tgz
 Patch0:		vdr-rotor-0.1.4-fix-crash.patch
 Patch1:		92_Rotor-0.1.4-vdr1.5.10.dpatch
